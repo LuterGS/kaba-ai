@@ -80,11 +80,13 @@ async def get_character_map(book_id: int, end_page: int | None = None):
 
 
 @app.get("/diary-img-url/{book_id}")
-async def get_diary_img_url(book_id: int, sentence: str | None = None):
+async def get_diary_img_url(book_id: int, sentence: str | None = None, img_style: str | None = None):
+    if img_style is None:
+        img_style = "anime"
     if sentence is None:
         return "not found!"
     else:
-        return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, flag_use_book_nm=True)
+        return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, img_style=img_style, flag_use_book_nm=True)
 
 
 @app.get("/ai-chat")

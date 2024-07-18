@@ -69,9 +69,8 @@ class PictureDiary:
             print("No images were generated.")
 
     # 좋아하는 문구 기반의 이미지 파일 저장 (책 이름 사용 플래그 추가)
-    def gen_diary_img_url(self, book_id, fav_sent: str, flag_use_book_nm):
+    def gen_diary_img_url(self, book_id, fav_sent: str, img_style: str, flag_use_book_nm):
         book_name = db.get_book_name(book_id)
-        img_style = "anime"
 
         # 그림 일기 프롬프트 정의
         if flag_use_book_nm is False:
