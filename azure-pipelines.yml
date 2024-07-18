@@ -11,12 +11,12 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'ab0394eb-1e74-42fe-9d62-631d12d17cc2'
+  dockerRegistryServiceConnection: 'd9c9d609-d374-4343-97e8-47e6f46a49dc'
   imageRepository: 'ai'
   containerRegistry: 'ktkaba.azurecr.io'
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
-  imagePullSecret: 'ktkaba4d8a-auth'
+  imagePullSecret: 'ktkabaa15a-auth'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -53,7 +53,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'ai.kaba'
+    environment: 'ai-5226.kaba'
     strategy:
       runOnce:
         deploy:
@@ -77,4 +77,3 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
-
