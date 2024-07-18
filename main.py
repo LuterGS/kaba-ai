@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from openai.lib.azure import AzureOpenAI
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from feature.ai_chat import AiChat
 from feature.character_map import CharacterMap
@@ -31,7 +31,8 @@ ai_chat = AiChat(client, deployment_name, endpoint, search_endpoint, search_key,
 app = FastAPI()
 
 origins = [
-    "https://kaba.team"
+    "https://kaba.team",
+    "http://localhost:3000"
 ]
 
 app.add_middleware(
