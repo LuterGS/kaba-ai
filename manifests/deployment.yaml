@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kaba-ai
+  namespace: kaba
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kaba-ai
+  template:
+    metadata:
+      labels:
+        app: kaba-ai
+    spec:
+      containers:
+        - image: ktkaba.azurecr.io/ai:latest
+          imagePullPolicy: Always
+          name: ai

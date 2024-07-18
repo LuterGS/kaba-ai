@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kaba-ai-service
+  namespace: kaba
+spec:
+  selector:
+    app: kaba-ai
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
