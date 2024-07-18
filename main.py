@@ -3,6 +3,7 @@ import os
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from openai.lib.azure import AzureOpenAI
+from starlette.middleware.cors import CORSMiddleware
 
 from feature.ai_chat import AiChat
 from feature.character_map import CharacterMap
@@ -29,6 +30,17 @@ ai_chat = AiChat(client, deployment_name, endpoint, search_endpoint, search_key,
 
 app = FastAPI()
 
+origins = [
+    "https://kaba.team"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
 async def test():
@@ -51,6 +63,7 @@ async def get_diary_img_url(book_id: int, sentence: str | None = None):
     else:
         return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, flag_use_book_nm=False)
 
+
 @app.get("/ai-chat/{book_id}")
 async def get_ai_chat(book_id: int, character: str | None = None, question: str | None = None):
     if character is None:
@@ -58,4 +71,3 @@ async def get_ai_chat(book_id: int, character: str | None = None, question: str 
     if question is None:
         question = "나에 대해 알려줘"
     return ai_chat.get_ai_character_chat_fast(book_id, character, question)
-
