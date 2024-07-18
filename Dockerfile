@@ -5,5 +5,5 @@ WORKDIR /ai
 
 COPY . ./
 
-RUN pip install requirements.txt
+RUN pip install -r requirements.txt
 ENTRYPOINT ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
