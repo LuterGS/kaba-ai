@@ -14,13 +14,14 @@ class AICharacterChat:
         self._search_key = search_key
         self._search_index = search_index
         self._messages = []
+        self._base = None
 
     def start_conversation(self, book_id, character):
         book_name = db.get_book_name(book_id)
 
         # 시스템 메시지에서 특정 구문이 날라올 경우, gpt가 알고 있는 내용으로 답변해줘.
         system_msg = f"당신의 유일한 역할은 {book_name} 책의 {character} 역할이다. {character} 역할이라고 생각하고 질문에 답변해."
-        self._messages.append({"role": "system", "content": system_msg})
+        self._base = {"role": "system", "content": system_msg}
 
     def remove_doc_tags(self, text):
         # 정규 표현식 패턴 정의: [doc숫자] 형식
@@ -58,7 +59,7 @@ class AICharacterChat:
                         "semantic_configuration": f"{self._search_index}-semantic-configuration",
                         "query_type": "vector_semantic_hybrid",
                         "in_scope": True,
-                        "role_information": self._messages[0]["content"],
+                        "role_information": self._base["content"],
                         "strictness": 1, # default : 3 / 값을 낮추면 더 빠른 응답을 얻을 수 있지만, 정보의 정확성이 떨어질 수 있음
                         "top_n_documents": 1, # default : 5 / 검색 결과 개수 설정, '3'
                         "authentication": {
