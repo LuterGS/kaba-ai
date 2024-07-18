@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from feature.ai_chat import AiChat
 from feature.character_map import CharacterMap
 from feature.picture_diary import PictureDiary
+from feature.recap_geneator import RecapGenerator
 
 load_dotenv()
 
@@ -27,6 +28,7 @@ deployment_name = os.getenv('DEPLOYMENT_NAME')  # gpt-4o
 character_map = CharacterMap(client, deployment_name)
 picture_diary = PictureDiary(client, deployment_name)
 ai_chat = AiChat(client, deployment_name, endpoint, search_endpoint, search_key, search_index)
+recap_generator = RecapGenerator(client, deployment_name)
 
 app = FastAPI()
 
@@ -72,3 +74,11 @@ async def get_ai_chat(book_id: int, character: str | None = None, question: str 
     if question is None:
         question = "나에 대해 알려줘"
     return ai_chat.get_ai_character_chat_fast(book_id, character, question)
+
+
+@app.get("/recap-generator/{book_id}")
+async def get_recap_generator(book_id: int, end_page: int | None = None, img_style: str | None = None):
+    if end_page is None:
+        end_page = 3
+    return recap_generator.get_summary_plot_img(book_id, 1, end_page, img_style)
+
