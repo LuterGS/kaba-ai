@@ -38,9 +38,9 @@ async def get_character_map(book_name: str, start_page: int | None = None, end_p
     return character_map.get_relation_map(start_page, end_page, book_name)
 
 
-@app.get("/diary_img/{book_name}")
-async def get_diary_img(book_name: str, sentence: str | None = None):
+@app.get("/diary-img-url/{book_name}")
+async def get_diary_img_url(book_name: str, sentence: str | None = None):
     if sentence is None:
         return "not found!"
     else:
-        return picture_diary.gen_diary_img(book_name=book_name, fav_sent=sentence, flag_use_book_nm=False)
+        return picture_diary.gen_diary_img_url(book_name=book_name, fav_sent=sentence, flag_use_book_nm=False)

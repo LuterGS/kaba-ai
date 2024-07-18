@@ -67,9 +67,8 @@ class PictureDiary:
         else:
             print("No images were generated.")
 
-    # %%
     # 좋아하는 문구 기반의 이미지 파일 저장 (책 이름 사용 플래그 추가)
-    def gen_diary_img(self, book_name, fav_sent, flag_use_book_nm):
+    def gen_diary_img_url(self, book_name, fav_sent, flag_use_book_nm):
         # save path
         # TODO : 추후에 azure blob container 에 저장하고 받을 수 있게
         diary_file_path = f'img/test_diary/{book_name}_{str(flag_use_book_nm)}_diary.png'
@@ -85,5 +84,7 @@ class PictureDiary:
         # 이미지 생성
         diary_img_urls = self._generate_image(diary_prompt)
 
+        return {"urls": diary_img_urls}
+
         # 이미지 저장
-        self._save_img_by_url(diary_img_urls, diary_file_path)
+        # self._save_img_by_url(diary_img_urls, diary_file_path)
