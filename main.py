@@ -6,6 +6,7 @@ from openai.lib.azure import AzureOpenAI
 from starlette.middleware.cors import CORSMiddleware
 
 from feature.ai_chat import AiChat
+from feature.ai_chat_multiturn import AICharacterChat
 from feature.character_map import CharacterMap
 from feature.kaba_wiki import KabaWiki
 from feature.picture_diary import PictureDiary
@@ -32,6 +33,21 @@ ai_chat = AiChat(client, deployment_name, endpoint, search_endpoint, search_key,
 recap_generator = RecapGenerator(client, deployment_name)
 kaba_wiki = KabaWiki(client, deployment_name, search_endpoint, search_key, search_index)
 
+book_1_little_prince = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_1_little_prince.start_conversation(1, "어린 왕자")
+
+book_1_fox = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_1_fox.start_conversation(1, "여우")
+
+book_1_snake = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_1_snake.start_conversation(1, "보아뱀")
+
+chatbots = {
+    "어린 왕자": book_1_little_prince,
+    "여우": book_1_fox,
+    "보아뱀": book_1_snake
+}
+
 app = FastAPI()
 
 origins = [
@@ -47,6 +63,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
 
 @app.get("/")
 async def test():
@@ -70,13 +87,23 @@ async def get_diary_img_url(book_id: int, sentence: str | None = None):
         return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, flag_use_book_nm=False)
 
 
-@app.get("/ai-chat/{book_id}")
-async def get_ai_chat(book_id: int, character: str | None = None, question: str | None = None):
-    if character is None:
-        character = "주인공"
-    if question is None:
-        question = "나에 대해 알려줘"
-    return ai_chat.get_ai_character_chat_fast(book_id, character, question)
+@app.get("/ai-chat")
+async def get_ai_chat(character: str | None = None, question: str | None = None):
+    chatbot = chatbots.get(character)
+    if chatbot is None:
+        return {"response": "없는 인물에 대한 채팅을 요청했습니다."}
+    else:
+        return {"response": chatbot.get_ai_character_chat_fast(question)}
+
+
+@app.post("/ai-chat/clear")
+async def clear_ai_chat(character: str | None = None):
+    chatbot = chatbots.get(character)
+    if chatbot is None:
+        return {"response": "not found"}
+    else:
+        chatbot.clear_history()
+        return {"response": "ok"}
 
 
 @app.get("/recap-generator/{book_id}")
