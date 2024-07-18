@@ -78,7 +78,7 @@ class AICharacterChat:
         response_content = response.choices[0].message.content
         response_content = self.remove_doc_tags(response_content)
 
-        check_resp_list = ['다른 질문', '다른 질문', '이 질문은 내가 답변할 수 있는 범위를', '요청하신 정보는 제공된',
+        check_resp_list = ['다른 질문', '다른 대화', '이 질문은 내가 답변할 수 있는 범위를', '요청하신 정보는 제공된',
                            '제공된 문서에서', '대화에서 벗어난', '답할 수 없어']
 
         if any(check_resp in response_content for check_resp in check_resp_list):
@@ -98,7 +98,7 @@ class AICharacterChat:
         # 기존 대화와 맥락을 바탕으로 유연한 답변을 생성
         fallback_response = self._azure_client.chat.completions.create(
             model=self._deployment_name,
-            messages=self._messages,
+            messages=[self._base] + self._messages,
             max_tokens=300,
             temperature=0.7,  # 창의적 답변을 위해 온도 조절
             top_p=1,
