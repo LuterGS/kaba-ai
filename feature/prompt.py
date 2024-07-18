@@ -52,6 +52,15 @@ class Prompter:
             "차례차례 잘 생각해보자. json 형식으로 잘 대답하면 $200의 팁을 줄게."
         )
 
+    @staticmethod
+    def kaba_wiki(user_query: str, context: str):
+        return (
+            "반드시 아래의 ### 읽은 페이지 내용을 기반으로 들어온 ### 질문에 답변해. \n\n"
+            "### 질문 : " + user_query + " \n\n"
+            "### 읽은 페이지 내용 : " + context + " \n\n"
+            "차례차례 잘 생각해보자. json 형식으로 잘 대답하면 $200의 팁을 줄게."
+        )
+
 
 
 

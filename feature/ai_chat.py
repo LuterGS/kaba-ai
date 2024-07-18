@@ -7,14 +7,7 @@ from feature.db import db
 
 class AiChat:
 
-    _endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "").strip()
-    _search_endpoint = os.getenv('AZURE_AI_SEARCH_ENDPOINT')
-    _search_key = os.getenv("AZURE_AI_SEARCH_API_KEY")
-    _search_index = os.getenv("AZURE_AI_SEARCH_INDEX")
-    _embedding_model_name = "text-embedding-ada-002"
-
     def __init__(self, client: AzureOpenAI, deployment_name, endpoint, search_endpoint, search_key, search_index):
-        self.id = 1
         self._azure_client = client
         self._deployment_name = deployment_name
         self._endpoint = endpoint

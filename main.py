@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from feature.ai_chat import AiChat
 from feature.character_map import CharacterMap
+from feature.kaba_wiki import KabaWiki
 from feature.picture_diary import PictureDiary
 from feature.recap_geneator import RecapGenerator
 
@@ -29,6 +30,7 @@ character_map = CharacterMap(client, deployment_name)
 picture_diary = PictureDiary(client, deployment_name)
 ai_chat = AiChat(client, deployment_name, endpoint, search_endpoint, search_key, search_index)
 recap_generator = RecapGenerator(client, deployment_name)
+kaba_wiki = KabaWiki(client, deployment_name, search_endpoint, search_key, search_index)
 
 app = FastAPI()
 
@@ -82,3 +84,7 @@ async def get_recap_generator(book_id: int, end_page: int | None = None, img_sty
         end_page = 3
     return recap_generator.get_summary_plot_img(book_id, 1, end_page, img_style)
 
+
+@app.get("/kaba-wiki/{book_id}")
+async def get_kaba_wiki(book_id: int, sentence: str | None = None):
+    return kaba_wiki.get_wiki_context_answer(book_id, 1, 1, sentence)
