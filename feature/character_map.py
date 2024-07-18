@@ -11,9 +11,9 @@ class CharacterMap:
         self._deployment_name = deployment_name
         self._pdf_reader = PdfReader()
 
-    def get_relation_map(self, start_page, end_page, book_name: str):
+    def get_relation_map(self, start_page, end_page, book_id):
         # 소설 시작부터 현재까지 읽은 페이지 데이터 얻기
-        context_book_str = self._pdf_reader.get_pdf_text(start_page, end_page, book_name)
+        context_book_str = self._pdf_reader.get_pdf_text(start_page, end_page, book_id)
 
         # system에 들어갈 system 메시지 작성
         system_msg = "너는 10년동안 책 안에 있는 인물들로 인물 관계도를 만드는 전문가야. 지시사항에 맞게 인물 관계도를 만들어."

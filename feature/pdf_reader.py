@@ -1,5 +1,8 @@
 import pdfplumber
 
+from feature.db import db
+
+
 class PdfReader:
     def __init__(self):
         # web client 필요
@@ -56,10 +59,9 @@ class PdfReader:
 
         return mod_slice_pdf_str
 
-    def get_pdf_text(self, start, end, name) -> str:
+    def get_pdf_text(self, start, end, book_id) -> str:
         # TODO : Azure container 에서 다운로드한 후 넘길 수 있도록 변경
-        lp_pdf_path = './data/little_prince.pdf'
-        all_text_list, num_pages = self._get_pdf_text(lp_pdf_path, True)
-
+        pdf_path = db.get_pdf_location(book_id)
+        all_text_list, num_pages = self._get_pdf_text(pdf_path, True)
         return self._slice_pdf_page(start, end, all_text_list)
 
