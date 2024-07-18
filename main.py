@@ -2,7 +2,7 @@ import os
 
 from fastapi import FastAPI
 from dotenv import load_dotenv
-from openai import AzureOpenAI
+from openai.lib.azure import AzureOpenAI
 
 from feature.character_map import CharacterMap
 from feature.picture_diary import PictureDiary
@@ -23,7 +23,12 @@ picture_diary = PictureDiary(client, deployment_name)
 app = FastAPI()
 
 
-@app.get("/ai/character-map/{book_name}")
+@app.get("/")
+async def test():
+    return "hello world!"
+
+
+@app.get("/character-map/{book_name}")
 async def get_character_map(book_name: str, start_page: int | None = None, end_page: int | None = None):
     if start_page is None:
         start_page = 1
@@ -31,7 +36,9 @@ async def get_character_map(book_name: str, start_page: int | None = None, end_p
         end_page = start_page + 1
     print(start_page, end_page)
     return character_map.get_relation_map(start_page, end_page, book_name)
-@app.get("/ai/diary_img/{book_name}")
+
+
+@app.get("/diary_img/{book_name}")
 async def get_diary_img(book_name: str, sentence: str | None = None):
     if sentence is None:
         return "not found!"
