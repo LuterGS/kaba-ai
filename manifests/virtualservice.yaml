@@ -17,4 +17,16 @@ spec:
             port:
               number: 8000
             host: kaba-ai-service
+      corsPolicy:
+        allowOrigin:
+          - "https://kaba.team"
+          - "http://localhost:3000"
+        allowMethods:
+          - POST
+          - GET
+          - PUT
+          - DELETE
+        allowHeaders:
+          - "*"
+        allowCredentials: true
       timeout: 600s

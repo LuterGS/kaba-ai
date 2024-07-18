@@ -43,12 +43,10 @@ class CharacterMap:
         main_character = relation_map_dict[relation_map_keys[0]]  # 주인공
         characters = relation_map_dict[relation_map_keys[1]]  # 등장인물
         relation_map = relation_map_dict[relation_map_keys[2]]  # 인물관계
-        event = relation_map_dict[relation_map_keys[3]]  # 인물관계
 
         return {
             "mainCharacter": main_character,
             "characters": characters,
-            "relationMap": relation_map,
-            "event": event
+            "relationMap": relation_map
         }
 
