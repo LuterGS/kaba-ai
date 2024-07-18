@@ -21,7 +21,7 @@ class KabaWiki:
         print(book_name)
 
         # # init system message
-        system_msg = f"당신의 유일한 역할은 {book_name} 책의 주인공이다. 책 내용을 기반으로 질문에 답변해."
+        system_msg = f"당신의 유일한 역할은 {book_name} 책을 읽은 선생님이다. 책 내용을 기반으로 질문에 답변해."
         #
         # # 소설 시작부터 현재까지 읽은 페이지 데이터
         # context_boot_str = self._pdf_reader.get_pdf_text(start_page, end_page, book_id)
