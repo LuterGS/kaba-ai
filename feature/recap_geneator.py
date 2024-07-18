@@ -245,12 +245,15 @@ class RecapGenerator:
     # 지난 줄거리를 keyword로 요약한 다음 keyword 기반으로 그림 생성
     def gen_summary_img(self, sent_keyword_list, img_style):
         summary_img_url_list = []
+        filter_list = ["유아", "아동", "애기", "아기", "어린이", "유소년", "유치원생", "영아", "미취학아동", "갓난아기"]
 
         # key값들이 변할 수 있으므로 index로 접근해야 함
         for img_idx, sent_keyword in enumerate(sent_keyword_list):
 
+            filtered_keyword = [item for item in sent_keyword if item not in filter_list]
+
             # init image prompt / img_style : anime, dreamscape
-            summary_img_prompt = Prompter.summary_img(img_style, ', '.join(sent_keyword))
+            summary_img_prompt = Prompter.summary_img(img_style, ', '.join(filtered_keyword))
 
             # 이미지 생성
             summary_img_urls = self._generate_image(summary_img_prompt)
@@ -274,6 +277,7 @@ class RecapGenerator:
 
             # 줄거리 요약 전처리
             sent_list, keyword_list = self._prep_summary_result(summary_plot_result, book_name)
+
 
             # 키워드 기반의 이미지 생성 (파일 저장)
             summary_img_url_list = self.gen_summary_img(keyword_list, img_style)
