@@ -71,14 +71,15 @@ class PictureDiary:
     # 좋아하는 문구 기반의 이미지 파일 저장 (책 이름 사용 플래그 추가)
     def gen_diary_img_url(self, book_id, fav_sent: str, flag_use_book_nm):
         book_name = db.get_book_name(book_id)
+        img_style = "anime"
 
         # 그림 일기 프롬프트 정의
-        if flag_use_book_nm == False:
+        if flag_use_book_nm is False:
             # 책 이름 없이 그림 생성
-            diary_prompt = Prompter.diary_img(fav_sent)
+            diary_prompt = Prompter.diary_img(fav_sent, img_style)
         else:
             # 책 이름 넣고 그림 생성
-            diary_prompt = Prompter.diary_img_with_book(book_name, fav_sent)
+            diary_prompt = Prompter.diary_img_with_book(book_name, fav_sent, img_style)
 
         filter_list = ["유아", "아동", "애기", "아기", "어린이", "유소년", "유치원생", "영아", "미취학아동", "갓난아기"]
         for word in filter_list:

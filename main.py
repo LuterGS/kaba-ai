@@ -84,7 +84,7 @@ async def get_diary_img_url(book_id: int, sentence: str | None = None):
     if sentence is None:
         return "not found!"
     else:
-        return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, flag_use_book_nm=False)
+        return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, flag_use_book_nm=True)
 
 
 @app.get("/ai-chat")
