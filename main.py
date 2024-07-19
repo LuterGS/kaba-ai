@@ -112,7 +112,7 @@ async def clear_ai_chat(character: str | None = None):
 async def get_recap_generator(book_id: int, end_page: int | None = None, img_style: str | None = None):
     if end_page is None:
         end_page = 3
-    return recap_generator.get_summary_plot_img(book_id, 1, end_page, img_style)
+    return recap_generator.get_summary_plot_img(book_id, end_page, img_style)
 
 
 @app.get("/kaba-wiki/{book_id}")

@@ -267,7 +267,8 @@ class RecapGenerator:
         return summary_img_url_list
 
     # 줄거리 요약 및 이미지 얻기
-    def get_summary_plot_img(self, book_id, start_page, end_page, img_style):
+    def get_summary_plot_img(self, book_id, end_page, img_style):
+        start_page = db.get_page_start(book_id)
         book_name = db.get_book_name(book_id)
 
         try:

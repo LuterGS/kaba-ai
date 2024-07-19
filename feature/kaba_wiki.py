@@ -3,6 +3,7 @@ from openai.lib.azure import AzureOpenAI
 from feature.db import db
 from feature.pdf_reader import PdfReader
 from feature.prompt import Prompter
+from feature.util import UtilFunctions
 
 
 class KabaWiki:
@@ -79,7 +80,7 @@ class KabaWiki:
             }
         )
 
-        return {
-            "response": response.choices[0].message.content
-        }
+        result = response.choices[0].message.content
+        result = UtilFunctions.remove_doc_tags(result)
+        return {"response": result}
 

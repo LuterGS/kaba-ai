@@ -3,6 +3,7 @@ import re
 from openai.lib.azure import AzureOpenAI
 
 from feature.db import db
+from feature.util import UtilFunctions
 
 
 class AICharacterChat:
@@ -22,17 +23,6 @@ class AICharacterChat:
         # 시스템 메시지에서 특정 구문이 날라올 경우, gpt가 알고 있는 내용으로 답변해줘.
         system_msg = f"당신의 유일한 역할은 {book_name} 책의 {character} 역할이다. {character} 역할이라고 생각하고 질문에 답변해."
         self._base = {"role": "system", "content": system_msg}
-
-    def remove_doc_tags(self, text):
-        # 정규 표현식 패턴 정의: [doc숫자] 형식
-        pattern1 = r'\[doc\d+\]'
-        # 정규 표현식 패턴 정의: 연속된 하나 이상의 스페이스
-        pattern2 = r'\s+'
-        # 패턴에 매칭되는 부분을 빈 문자열로 대체
-        cleaned_text = re.sub(pattern1, '', text)
-        # 스페이스 여러 개 들어간 것 하나로 변경
-        cleaned_text = re.sub(pattern2, ' ', cleaned_text)
-        return cleaned_text
 
     def clear_history(self):
         self._messages = []
@@ -76,7 +66,7 @@ class AICharacterChat:
         )
 
         response_content = response.choices[0].message.content
-        response_content = self.remove_doc_tags(response_content)
+        response_content = UtilFunctions.remove_doc_tags(response_content)
 
         check_resp_list = ['다른 질문', '다른 대화', '이 질문은 내가 답변할 수 있는 범위를', '요청하신 정보는 제공된',
                            '제공된 문서에서', '대화에서 벗어난', '답할 수 없어']
@@ -108,7 +98,7 @@ class AICharacterChat:
             stream=False
         )
         result = fallback_response.choices[0].message.content
-        result = self.remove_doc_tags(result)
+        result = UtilFunctions.remove_doc_tags(result)
         return result
 
 
