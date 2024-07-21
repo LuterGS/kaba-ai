@@ -4,7 +4,7 @@ metadata:
   name: kaba-ai
   namespace: kaba
 spec:
-  replicas: 1
+  replicas: 6
   selector:
     matchLabels:
       app: kaba-ai
