@@ -252,7 +252,7 @@ class RecapGenerator:
 
     # 지난 줄거리를 keyword로 요약한 다음 keyword 기반으로 그림 생성
     async def gen_summary_img(self, sent_keyword_list, img_style):
-        summary_img_url_list = []
+        summary_img_url_list = {}
         filter_list = ["유아", "아동", "애기", "아기", "어린이", "유소년", "유치원생", "영아", "미취학아동", "갓난아기"]
 
         async def process_keyword(img_idx, sent_keyword):
@@ -263,7 +263,7 @@ class RecapGenerator:
 
             # 이미지 생성
             summary_img_urls = await self._generate_image(summary_img_prompt)
-            summary_img_url_list.append(summary_img_urls)
+            summary_img_url_list[img_idx] = summary_img_urls
 
             # 이미지 저장
             # await save_img_by_url(summary_img_urls, img_file_path)
