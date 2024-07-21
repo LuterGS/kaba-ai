@@ -1,8 +1,10 @@
 import os
+from typing import Literal, List
 
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from openai.lib.azure import AzureOpenAI
+from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
 from feature.ai_chat import AiChat
@@ -89,23 +91,37 @@ async def get_diary_img_url(book_id: int, sentence: str | None = None, img_style
         return picture_diary.gen_diary_img_url(book_id=book_id, fav_sent=sentence, img_style=img_style, flag_use_book_nm=True)
 
 
-@app.get("/ai-chat")
-async def get_ai_chat(character: str | None = None, question: str | None = None):
-    chatbot = chatbots.get(character)
+# 메시지 모델 정의
+class Message(BaseModel):
+    role: Literal['user', 'assistant']
+    content: str
+
+
+# 요청 본문 모델 정의
+class Chat(BaseModel):
+    character: str
+    messages: List[Message]
+
+
+@app.post("/ai-chat")
+async def get_ai_chat(chat: Chat):
+    chatbot = chatbots.get(chat.character)
+    if len(chat.messages) > 10:
+        chat.messages = chat.messages[-10:]
     if chatbot is None:
         return {"response": "없는 인물에 대한 채팅을 요청했습니다."}
     else:
-        return {"response": chatbot.get_ai_character_chat_fast(question)}
+        return {"response": chatbot.get_ai_character_chat_fast(chat.messages)}
 
 
-@app.post("/ai-chat/clear")
-async def clear_ai_chat(character: str | None = None):
-    chatbot = chatbots.get(character)
-    if chatbot is None:
-        return {"response": "not found"}
-    else:
-        chatbot.clear_history()
-        return {"response": "ok"}
+# @app.post("/ai-chat/clear")
+# async def clear_ai_chat(character: str | None = None):
+#     chatbot = chatbots.get(character)
+#     if chatbot is None:
+#         return {"response": "not found"}
+#     else:
+#         chatbot.clear_history()
+#         return {"response": "ok"}
 
 
 @app.get("/recap-generator/{book_id}")

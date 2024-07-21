@@ -1,5 +1,3 @@
-import re
-
 from openai.lib.azure import AzureOpenAI
 
 from feature.db import db
@@ -14,7 +12,6 @@ class AICharacterChat:
         self._search_endpoint = search_endpoint
         self._search_key = search_key
         self._search_index = search_index
-        self._messages = []
         self._base = None
 
     def start_conversation(self, book_id, character):
@@ -24,15 +21,11 @@ class AICharacterChat:
         system_msg = f"당신의 유일한 역할은 {book_name} 책의 {character} 역할이다. {character} 역할이라고 생각하고 질문에 답변해."
         self._base = {"role": "system", "content": system_msg}
 
-    def clear_history(self):
-        self._messages = []
-
-    def get_ai_character_chat_fast(self, user_query, temperature=0):
-        self._messages.append({"role": "user", "content": user_query})
+    def get_ai_character_chat_fast(self, messages, temperature=0):
 
         response = self._azure_client.chat.completions.create(
             model=self._deployment_name,
-            messages=self._messages,
+            messages=messages,
             max_tokens=300,
             temperature=temperature,
             top_p=1,
@@ -77,18 +70,16 @@ class AICharacterChat:
             print('')
             # 검색 결과가 없을 경우 유연한 답변 생성
             # mod_user_query = '{character}의 입장에서 {user_query}를 대답해줘.'
-            response_content = self._generate_fallback_response()
-
-        self._messages.append({"role": "assistant", "content": response_content})
+            response_content = self._generate_fallback_response(messages)
 
         return response_content
 
-    def _generate_fallback_response(self):
+    def _generate_fallback_response(self, messages):
 
         # 기존 대화와 맥락을 바탕으로 유연한 답변을 생성
         fallback_response = self._azure_client.chat.completions.create(
             model=self._deployment_name,
-            messages=[self._base] + self._messages,
+            messages=[self._base] + messages,
             max_tokens=300,
             temperature=0.7,  # 창의적 답변을 위해 온도 조절
             top_p=1,
