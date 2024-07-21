@@ -1,5 +1,7 @@
 import json
 import re
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 from feature.db import db
 from feature.pdf_reader import PdfReader
@@ -14,6 +16,7 @@ class RecapGenerator:
         self._azure_client = client
         self._deployment_name = deployment_name
         self._pdf_reader = PdfReader()
+        self._executor = ThreadPoolExecutor(max_workers=10)
 
     def _summary_plot(self, book_id, start_page, end_page):
         # 소설 시작부터 현재까지 읽은 페이지 데이터 얻기
@@ -223,7 +226,12 @@ class RecapGenerator:
 
         return sent_list, keyword_list
 
-    def _generate_image(self, prompt, n=1, size="1024x1024"):
+    async def _generate_image(self, prompt, n=1, size="1024x1024"):
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(self._executor, self._generate_image_sync, prompt, n, size)
+
+    def _generate_image_sync(self, prompt, n=1, size="1024x1024"):
+
         try:
             response = self._azure_client.images.generate(
                 model="dall-e-3",
@@ -243,31 +251,32 @@ class RecapGenerator:
             return []
 
     # 지난 줄거리를 keyword로 요약한 다음 keyword 기반으로 그림 생성
-    def gen_summary_img(self, sent_keyword_list, img_style):
+    async def gen_summary_img(self, sent_keyword_list, img_style):
         summary_img_url_list = []
         filter_list = ["유아", "아동", "애기", "아기", "어린이", "유소년", "유치원생", "영아", "미취학아동", "갓난아기"]
 
-        # key값들이 변할 수 있으므로 index로 접근해야 함
-        for img_idx, sent_keyword in enumerate(sent_keyword_list):
-
+        async def process_keyword(img_idx, sent_keyword):
             filtered_keyword = [item for item in sent_keyword if item not in filter_list]
 
             # init image prompt / img_style : anime, dreamscape
             summary_img_prompt = Prompter.summary_img(img_style, ', '.join(filtered_keyword))
 
             # 이미지 생성
-            summary_img_urls = self._generate_image(summary_img_prompt)
+            summary_img_urls = await self._generate_image(summary_img_prompt)
             summary_img_url_list.append(summary_img_urls)
 
             # 이미지 저장
-            # save_img_by_url(summary_img_urls, img_file_path)
+            # await save_img_by_url(summary_img_urls, img_file_path)
 
             print(f'[INFO] Finish generate image {img_idx}...')
+
+        tasks = [process_keyword(img_idx, sent_keyword) for img_idx, sent_keyword in enumerate(sent_keyword_list)]
+        await asyncio.gather(*tasks)
 
         return summary_img_url_list
 
     # 줄거리 요약 및 이미지 얻기
-    def get_summary_plot_img(self, book_id, end_page, img_style):
+    async def get_summary_plot_img(self, book_id, end_page, img_style):
         start_page = db.get_page_start(book_id)
         book_name = db.get_book_name(book_id)
 
@@ -281,7 +290,7 @@ class RecapGenerator:
 
 
             # 키워드 기반의 이미지 생성 (파일 저장)
-            summary_img_url_list = self.gen_summary_img(keyword_list, img_style)
+            summary_img_url_list = await self.gen_summary_img(keyword_list, img_style)
             print("sent_list", sent_list)
             print("keyword_list", keyword_list)
             print("summary_img_url_list", summary_img_url_list)
