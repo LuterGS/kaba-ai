@@ -1,6 +1,7 @@
 import json
 from openai import AzureOpenAI
 
+from feature.db import db
 from feature.pdf_reader import PdfReader
 from feature.prompt import Prompter
 
@@ -11,8 +12,9 @@ class CharacterMap:
         self._deployment_name = deployment_name
         self._pdf_reader = PdfReader()
 
-    def get_relation_map(self, start_page, end_page, book_id):
+    def get_relation_map(self, end_page, book_id):
         # 소설 시작부터 현재까지 읽은 페이지 데이터 얻기
+        start_page = db.get_page_start(book_id)
         context_book_str = self._pdf_reader.get_pdf_text(start_page, end_page, book_id)
 
         # system에 들어갈 system 메시지 작성

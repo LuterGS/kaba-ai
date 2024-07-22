@@ -74,11 +74,7 @@ async def test():
 
 @app.get("/character-map/{book_id}")
 async def get_character_map(book_id: int, end_page: int | None = None):
-    start_page = 1
-    if end_page is None:
-        end_page = start_page + 1
-    print(start_page, end_page)
-    return character_map.get_relation_map(start_page, end_page, book_id)
+    return character_map.get_relation_map(end_page, book_id)
 
 
 @app.get("/diary-img-url/{book_id}")
