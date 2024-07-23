@@ -44,10 +44,26 @@ book_1_fox.start_conversation(1, "여우")
 book_1_snake = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
 book_1_snake.start_conversation(1, "보아뱀")
 
+book_1_star = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_1_star.start_conversation(1, "천문학자")
+
+book_1_ceo = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_1_ceo.start_conversation(1, "사업가")
+
+book_2_romeo = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_2_romeo.start_conversation(2, "로미오")
+
+book_2_juliet = AICharacterChat(client, deployment_name, search_endpoint, search_key, search_index)
+book_2_juliet.start_conversation(2, "줄리엣")
+
 chatbots = {
     "어린 왕자": book_1_little_prince,
     "여우": book_1_fox,
-    "보아뱀": book_1_snake
+    "보아뱀": book_1_snake,
+    "천문학자": book_1_star,
+    "사업가": book_1_ceo,
+    "로미오": book_2_romeo,
+    "줄리엣": book_2_juliet
 }
 
 app = FastAPI()
